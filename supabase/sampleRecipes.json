@@ -1,0 +1,85 @@
+{
+  "recipes": [
+    {
+      "name": "Grilled Salmon with Roasted Vegetables",
+      "description": "Fresh salmon fillet with seasonal roasted vegetables and herbs",
+      "image": "",
+      "cookTime": 25,
+      "servings": 2,
+      "difficulty": "medium",
+      "tags": ["healthy", "protein", "quick", "gluten-free"],
+      "instructions": [
+        "Preheat oven to 200°C",
+        "Season salmon with salt, pepper and herbs",
+        "Cut vegetables into chunks and toss with olive oil",
+        "Roast vegetables for 15 minutes",
+        "Grill salmon for 4-5 minutes each side",
+        "Serve with lemon wedges"
+      ],
+      "ingredients": [
+        { "name": "Salmon fillet", "amount": 2, "unit": "pieces", "category": "protein" },
+        { "name": "Broccoli", "amount": 200, "unit": "g", "category": "vegetable" },
+        { "name": "Bell peppers", "amount": 1, "unit": "piece", "category": "vegetable" },
+        { "name": "Olive oil", "amount": 2, "unit": "tbsp", "category": "other" },
+        { "name": "Lemon", "amount": 1, "unit": "piece", "category": "other" },
+        { "name": "Garlic", "amount": 2, "unit": "cloves", "category": "spice" },
+        { "name": "Fresh herbs", "amount": 1, "unit": "bunch", "category": "spice" }
+      ]
+    },
+    {
+      "name": "Pasta Primavera",
+      "description": "Creamy pasta with fresh seasonal vegetables and parmesan",
+      "image": "",
+      "cookTime": 20,
+      "servings": 4,
+      "difficulty": "easy",
+      "tags": ["vegetarian", "comfort-food", "easy", "family-friendly"],
+      "instructions": [
+        "Cook pasta according to package instructions",
+        "Sauté garlic in olive oil until fragrant",
+        "Add vegetables and cook until tender",
+        "Pour in cream and simmer",
+        "Add cooked pasta and toss with cheese",
+        "Season with salt, pepper and fresh herbs"
+      ],
+      "ingredients": [
+        { "name": "Pasta", "amount": 400, "unit": "g", "category": "grain" },
+        { "name": "Heavy cream", "amount": 200, "unit": "ml", "category": "dairy" },
+        { "name": "Parmesan cheese", "amount": 100, "unit": "g", "category": "dairy" },
+        { "name": "Zucchini", "amount": 1, "unit": "piece", "category": "vegetable" },
+        { "name": "Cherry tomatoes", "amount": 200, "unit": "g", "category": "vegetable" },
+        { "name": "Asparagus", "amount": 150, "unit": "g", "category": "vegetable" },
+        { "name": "Garlic", "amount": 3, "unit": "cloves", "category": "spice" }
+      ]
+    },
+    {
+      "name": "Chicken Stir-Fry",
+      "description": "Healthy chicken stir-fry with colorful vegetables and ginger",
+      "image": "",
+      "cookTime": 15,
+      "servings": 3,
+      "difficulty": "easy",
+      "tags": ["healthy", "quick", "protein", "asian", "low-carb"],
+      "instructions": [
+        "Cut chicken into bite-sized pieces",
+        "Heat oil in a wok or large pan",
+        "Stir-fry chicken until golden",
+        "Add vegetables and stir-fry for 3-4 minutes",
+        "Add soy sauce and ginger",
+        "Serve immediately over rice"
+      ],
+      "ingredients": [
+        { "name": "Chicken breast", "amount": 400, "unit": "g", "category": "protein" },
+        { "name": "Soy sauce", "amount": 3, "unit": "tbsp", "category": "other" },
+        { "name": "Ginger", "amount": 2, "unit": "cm", "category": "spice" },
+        { "name": "Bell peppers", "amount": 2, "unit": "pieces", "category": "vegetable" },
+        { "name": "Snap peas", "amount": 150, "unit": "g", "category": "vegetable" },
+        { "name": "Carrots", "amount": 1, "unit": "piece", "category": "vegetable" },
+        { "name": "Sesame oil", "amount": 1, "unit": "tbsp", "category": "other" }
+      ]
+    }
+  ]
+}
+
+
+
