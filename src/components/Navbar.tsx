@@ -151,7 +151,6 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center gap-2">
-          <LanguageSwitcher />
           {isSupabaseEnabled && userEmail && (
             <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
               <LogOut className="h-4 w-4" />
@@ -217,6 +216,9 @@ const Navbar = () => {
                     </Button>
                   );
                 })}
+                <div className="pt-4 border-t">
+                  <LanguageSwitcher />
+                </div>
               </div>
             </SheetContent>
           </Sheet>
