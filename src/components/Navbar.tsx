@@ -8,9 +8,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { isSupabaseEnabled, supabase } from "@/lib/supabaseClient";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const { t } = useTranslation();
+  const { toast } = useToast();
   
   const navItems = [
     { to: "/", label: t('navigation.recipes'), icon: BookOpen },
@@ -36,8 +38,24 @@ const Navbar = () => {
 
   const sendMagicLink = async () => {
     if (!isSupabaseEnabled) return;
-    await supabase!.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });
-    setOpen(false);
+    try {
+      await supabase!.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });
+      setOpen(false);
+      
+      // Afficher la notification de succès
+      toast({
+        title: t('auth.magicLinkSent'),
+        description: t('auth.magicLinkSentDescription', { email }),
+      });
+    } catch (error) {
+      console.error('Error sending magic link:', error);
+      // Optionnel : afficher une notification d'erreur
+      toast({
+        title: "Erreur",
+        description: "Impossible d'envoyer l'email. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    }
   };
 
   const oauth = async (provider: 'google' | 'github') => {

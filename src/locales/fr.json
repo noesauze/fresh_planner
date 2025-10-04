@@ -49,7 +49,9 @@
     "github": "GitHub",
     "loginRequired": "Connexion requise",
     "loginRequiredDescription": "Veuillez vous connecter pour ajouter des recettes à votre plan de repas.",
-    "emailPlaceholder": "vous@exemple.com"
+    "emailPlaceholder": "vous@exemple.com",
+    "magicLinkSent": "Email envoyé !",
+    "magicLinkSentDescription": "Un email contenant un lien de connexion a été envoyé à {{email}}. Vérifiez votre boîte de réception et cliquez sur le lien pour vous connecter."
   },
   "recipes": {
     "title": "Recettes fraîches",

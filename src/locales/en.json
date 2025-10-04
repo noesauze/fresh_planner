@@ -49,7 +49,9 @@
     "github": "GitHub",
     "loginRequired": "Login Required",
     "loginRequiredDescription": "Please log in to add recipes to your meal plan.",
-    "emailPlaceholder": "you@example.com"
+    "emailPlaceholder": "you@example.com",
+    "magicLinkSent": "Email sent!",
+    "magicLinkSentDescription": "An email containing a login link has been sent to {{email}}. Check your inbox and click the link to sign in."
   },
   "recipes": {
     "title": "Fresh Recipes",
