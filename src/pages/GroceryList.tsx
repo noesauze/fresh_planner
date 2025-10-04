@@ -9,8 +9,10 @@ import { GroceryItem, Ingredient, Recipe } from "@/types/recipe";
 import { useToast } from "@/hooks/use-toast";
 import { isSupabaseEnabled, supabase } from "@/lib/supabaseClient";
 import { fetchMealPlansForUser, fetchGroceryListForUser, upsertGroceryListItem, deleteGroceryListItem, clearGroceryListForUser } from "@/lib/supabaseApi";
+import { useTranslation } from 'react-i18next';
 
 const GroceryList = () => {
+  const { t } = useTranslation();
   // Planned meals -> recipes from Supabase meal_plans when available
   const [plannedRecipes, setPlannedRecipes] = useState<Recipe[]>(sampleRecipes.slice(0, 0));
   const [groceryItems, setGroceryItems] = useState<GroceryItem[]>([]);
@@ -172,7 +174,7 @@ const GroceryList = () => {
   const addCustomItem = async () => {
     const newItem: GroceryItem = {
       id: Math.random().toString(36).substr(2, 9),
-      name: "Custom Item",
+      name: t('groceryList.customItem'),
       amount: 1,
       unit: "piece",
       category: "other",
@@ -236,10 +238,10 @@ const GroceryList = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
             <ShoppingCart className="h-8 w-8 text-primary" />
-            Smart Grocery List
+            {t('groceryList.title')}
           </h1>
           <p className="text-muted-foreground">
-            Optimized quantities based on your meal plan
+            {t('groceryList.subtitle')}
           </p>
         </div>
 
@@ -249,13 +251,13 @@ const GroceryList = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Progress</p>
+                  <p className="text-sm text-muted-foreground">{t('groceryList.progress')}</p>
                   <p className="text-2xl font-bold text-foreground">
                     {checkedCount}/{totalCount}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</p>
+                  <p className="text-sm text-muted-foreground">{Math.round(progress)}% {t('groceryList.complete')}</p>
                   <div className="w-20 h-2 bg-muted rounded-full mt-1">
                     <div 
                       className="h-full bg-success rounded-full transition-all duration-300"
@@ -271,7 +273,7 @@ const GroceryList = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Planned Recipes</p>
+                  <p className="text-sm text-muted-foreground">{t('groceryList.plannedRecipes')}</p>
                   <p className="text-2xl font-bold text-foreground">{plannedRecipes.length}</p>
                 </div>
                 <Package className="h-8 w-8 text-primary" />
@@ -285,7 +287,7 @@ const GroceryList = () => {
           <div className="flex gap-4 mb-6">
             <Button variant="outline" onClick={addCustomItem}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Custom Item
+              {t('groceryList.addCustomItem')}
             </Button>
             <Button 
               variant="outline" 
@@ -293,7 +295,7 @@ const GroceryList = () => {
               className="text-destructive hover:text-destructive"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Clear List
+              {t('groceryList.clearList')}
             </Button>
           </div>
         )}
@@ -308,7 +310,7 @@ const GroceryList = () => {
                     <span className="text-2xl">{categoryIcons[category as keyof typeof categoryIcons]}</span>
                     {category}
                     <Badge variant={categoryColors[category as keyof typeof categoryColors]} className="ml-auto">
-                      {items.length} items
+                      {t('groceryList.items', { count: items.length })}
                     </Badge>
                   </CardTitle>
                 </CardHeader>
@@ -354,12 +356,12 @@ const GroceryList = () => {
             <CardContent className="p-12 text-center">
               <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                {plannedRecipes.length === 0 ? "No Planned Meals" : "No Grocery Items"}
+                {plannedRecipes.length === 0 ? t('groceryList.noPlannedMeals') : t('groceryList.noGroceryItems')}
               </h3>
               <p className="text-muted-foreground mb-6">
                 {plannedRecipes.length === 0 
-                  ? "Plan some meals in the Meal Planner to see your grocery list here."
-                  : "Your planned meals don't have any ingredients yet."
+                  ? t('groceryList.noPlannedMealsDescription')
+                  : t('groceryList.noGroceryItemsDescription')
                 }
               </p>
             </CardContent>

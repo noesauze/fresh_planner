@@ -8,8 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowLeft, Clock, Users, ChefHat } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const RecipeDetail = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -31,9 +33,9 @@ const RecipeDetail = () => {
       <div className="container mx-auto px-4 py-10">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          {t('common.back')}
         </Button>
-        <p className="text-muted-foreground">Recipe not found.</p>
+        <p className="text-muted-foreground">{t('errors.recipeNotFound')}</p>
       </div>
     );
   }
@@ -42,7 +44,7 @@ const RecipeDetail = () => {
     <div className="container mx-auto px-4 py-10">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
+        {t('common.back')}
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -53,8 +55,8 @@ const RecipeDetail = () => {
 
           <Card className="mt-6">
             <CardHeader>
-              <h2 className="text-xl font-semibold">Instructions</h2>
-              <p className="text-sm text-muted-foreground">Follow these steps to cook {recipe.name}.</p>
+              <h2 className="text-xl font-semibold">{t('recipes.instructions')}</h2>
+              <p className="text-sm text-muted-foreground">{t('recipes.followSteps', { recipeName: recipe.name })}</p>
             </CardHeader>
             <CardContent>
               <ol className="list-decimal pl-6 space-y-3">
@@ -78,11 +80,11 @@ const RecipeDetail = () => {
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  {recipe.cookTime}m
+                  {t('recipes.cookTime', { time: recipe.cookTime })}
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
-                  {recipe.servings}
+                  {t('recipes.servings', { count: recipe.servings })}
                 </div>
                 <div className="flex items-center gap-1">
                   <ChefHat className="h-4 w-4" />
@@ -96,7 +98,7 @@ const RecipeDetail = () => {
                 ))}
               </div>
 
-              <h3 className="font-semibold mb-3">Ingredients</h3>
+              <h3 className="font-semibold mb-3">{t('recipes.ingredientsList')}</h3>
               <ul className="space-y-2">
                 {recipe.ingredients.map(ing => (
                   <li key={ing.id} className="flex items-center justify-between">
@@ -108,7 +110,7 @@ const RecipeDetail = () => {
                 ))}
               </ul>
 
-              <Button className="w-full mt-6">Add to Meal Plan</Button>
+              <Button className="w-full mt-6">{t('recipes.addToMealPlan')}</Button>
             </CardContent>
           </Card>
         </div>

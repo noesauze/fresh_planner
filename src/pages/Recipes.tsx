@@ -11,8 +11,10 @@ import heroImage from "@/assets/hero-image.jpg";
 import { useNavigate } from "react-router-dom";
 import { isSupabaseEnabled, supabase } from "@/lib/supabaseClient";
 import { listRecipes as listRecipesFromSupabase, bulkInsertRecipes, upsertMealPlanRow } from "@/lib/supabaseApi";
+import { useTranslation } from 'react-i18next';
 
 const Recipes = () => {
+  const { t } = useTranslation();
   const [recipes, setRecipes] = useState<Recipe[]>(sampleRecipes);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -71,8 +73,8 @@ const Recipes = () => {
   const handleAddToPlan = async (recipe: Recipe, date: string, meal: 'breakfast' | 'lunch' | 'dinner') => {
     if (!isSupabaseEnabled || !userId) {
       toast({
-        title: "Login Required",
-        description: "Please log in to add recipes to your meal plan.",
+        title: t('auth.loginRequired'),
+        description: t('auth.loginRequiredDescription'),
         variant: "destructive",
       });
       return;
@@ -87,13 +89,17 @@ const Recipes = () => {
       });
       
       toast({
-        title: "Recipe Added!",
-        description: `${recipe.name} has been added to ${meal} on ${new Date(date).toLocaleDateString()}.`,
+        title: t('recipes.recipeAdded'),
+        description: t('recipes.recipeAddedDescription', { 
+          recipeName: recipe.name, 
+          meal: meal, 
+          date: new Date(date).toLocaleDateString() 
+        }),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to add recipe to meal plan.",
+        title: t('recipes.error'),
+        description: t('recipes.errorDescription'),
         variant: "destructive",
       });
     }
@@ -109,15 +115,14 @@ const Recipes = () => {
         />
         <div className="relative container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-4">
-            Fresh Recipes
+            {t('recipes.title')}
           </h1>
           <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-            Discover delicious, healthy recipes that make meal planning effortless. 
-            From quick weeknight dinners to weekend favorites.
+            {t('recipes.subtitle')}
           </p>
           <Button variant="hero" size="lg" className="text-lg px-8" onClick={() => navigate("/recipes/new") }>
             <Plus className="mr-2 h-5 w-5" />
-            Add New Recipe
+            {t('recipes.addNewRecipe')}
           </Button>
         </div>
       </section>
@@ -129,7 +134,7 @@ const Recipes = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Search recipes..."
+                placeholder={t('recipes.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -137,13 +142,13 @@ const Recipes = () => {
             </div>
             <Button variant="outline" className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              Filters
+              {t('recipes.filters')}
             </Button>
           </div>
 
           {/* Tags Filter */}
           <div className="flex flex-wrap gap-2 mb-4">
-            <span className="text-sm font-medium text-muted-foreground mr-2">Tags:</span>
+            <span className="text-sm font-medium text-muted-foreground mr-2">{t('recipes.tags')}:</span>
             {allTags.map(tag => (
               <Badge
                 key={tag}
@@ -157,7 +162,7 @@ const Recipes = () => {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? 's' : ''} found
+            {t('recipes.recipesFound', { count: filteredRecipes.length })}
           </p>
         </div>
 
@@ -175,13 +180,13 @@ const Recipes = () => {
         {filteredRecipes.length === 0 && (
           <div className="text-center py-12">
             <p className="text-lg text-muted-foreground mb-4">
-              No recipes found matching your criteria.
+              {t('recipes.noRecipesFound')}
             </p>
             <Button variant="outline" onClick={() => {
               setSearchTerm("");
               setSelectedTags([]);
             }}>
-              Clear Filters
+              {t('recipes.clearFilters')}
             </Button>
           </div>
         )}

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Clock, Users, ChefHat, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -15,6 +16,7 @@ interface RecipeCardProps {
 }
 
 const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
@@ -36,8 +38,8 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
       date.setDate(today.getDate() + i);
       days.push({
         value: date.toISOString().split('T')[0],
-        label: i === 0 ? 'Today' : 
-               i === 1 ? 'Tomorrow' : 
+        label: i === 0 ? t('common.today') : 
+               i === 1 ? t('common.tomorrow') : 
                date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
       });
     }
@@ -46,9 +48,9 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
 
   const days = getNext7Days();
   const mealTypes = [
-    { value: 'breakfast', label: 'Breakfast' },
-    { value: 'lunch', label: 'Lunch' },
-    { value: 'dinner', label: 'Dinner' }
+    { value: 'breakfast', label: t('mealPlanner.breakfast') },
+    { value: 'lunch', label: t('mealPlanner.lunch') },
+    { value: 'dinner', label: t('mealPlanner.dinner') }
   ] as const;
 
   const handleAddToPlan = () => {
@@ -97,15 +99,15 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
-            {recipe.cookTime}m
+            {t('recipes.cookTime', { time: recipe.cookTime })}
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
-            {recipe.servings}
+            {t('recipes.servings', { count: recipe.servings })}
           </div>
           <div className="flex items-center gap-1">
             <ChefHat className="h-4 w-4" />
-            {recipe.ingredients.length} ingredients
+            {t('recipes.ingredients', { count: recipe.ingredients.length })}
           </div>
         </div>
         
@@ -125,14 +127,14 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
             className="flex-1"
             onClick={(e) => { e.stopPropagation(); onSelect ? onSelect(recipe) : navigate(`/recipes/${recipe.id}`); }}
           >
-            View Recipe
+            {t('recipes.viewRecipe')}
           </Button>
           <Button 
             variant="default" 
             className="flex-1"
             onClick={handleAddToPlanClick}
           >
-            Add to Plan
+            {t('recipes.addToPlan')}
           </Button>
         </div>
       </CardFooter>
@@ -150,7 +152,7 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
           <DialogHeader onClick={(e) => e.stopPropagation()}>
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Add to Meal Plan
+              {t('recipes.addToMealPlan')}
             </DialogTitle>
           </DialogHeader>
           
@@ -174,11 +176,11 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {recipe.cookTime}m
+                    {t('recipes.cookTime', { time: recipe.cookTime })}
                   </span>
                   <span className="flex items-center gap-1">
                     <Users className="h-3 w-3" />
-                    {recipe.servings}
+                    {t('recipes.servings', { count: recipe.servings })}
                   </span>
                 </div>
               </div>
@@ -186,14 +188,14 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
 
             {/* Date Selection */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Date</label>
+              <label className="text-sm font-medium">{t('common.date')}</label>
               <Select value={selectedDate} onValueChange={setSelectedDate}>
                 <SelectTrigger 
                   onClick={(e) => e.stopPropagation()}
                   onTouchStart={(e) => e.stopPropagation()}
                   onTouchEnd={(e) => e.stopPropagation()}
                 >
-                  <SelectValue placeholder="Select a date" />
+                  <SelectValue placeholder={t('common.selectDate')} />
                 </SelectTrigger>
                 <SelectContent>
                   {days.map(day => (
@@ -207,14 +209,14 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
 
             {/* Meal Selection */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Meal</label>
+              <label className="text-sm font-medium">{t('common.meal')}</label>
               <Select value={selectedMeal} onValueChange={(value) => setSelectedMeal(value as 'breakfast' | 'lunch' | 'dinner')}>
                 <SelectTrigger 
                   onClick={(e) => e.stopPropagation()}
                   onTouchStart={(e) => e.stopPropagation()}
                   onTouchEnd={(e) => e.stopPropagation()}
                 >
-                  <SelectValue placeholder="Select a meal" />
+                  <SelectValue placeholder={t('common.selectMeal')} />
                 </SelectTrigger>
                 <SelectContent>
                   {mealTypes.map(meal => (
@@ -238,7 +240,7 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
               onTouchStart={(e) => e.stopPropagation()}
               onTouchEnd={(e) => e.stopPropagation()}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button 
               onClick={(e) => { e.stopPropagation(); handleAddToPlan(); }} 
@@ -246,7 +248,7 @@ const RecipeCard = ({ recipe, onSelect, onAddToPlan }: RecipeCardProps) => {
               onTouchStart={(e) => e.stopPropagation()}
               onTouchEnd={(e) => e.stopPropagation()}
             >
-              Add to Plan
+              {t('recipes.addToPlan')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 // Removed localStorage usage in favor of Supabase
 import { isSupabaseEnabled } from "@/lib/supabaseClient";
 import { createRecipe, listCatalog, upsertCatalogItems, uploadRecipeImage, upsertPackagingOptions } from "@/lib/supabaseApi";
+import { useTranslation } from 'react-i18next';
 
 const difficultyOptions: Recipe["difficulty"][] = ["easy", "medium", "hard"];
 const tagSuggestions = ["healthy", "quick", "vegetarian", "gluten-free", "comfort-food", "family-friendly", "protein", "asian"];
@@ -21,6 +22,7 @@ function toNumber(value: string): number {
 }
 
 const NewRecipe = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [catalog, setCatalog] = useState<{ name: string; defaultUnit: string; category: Ingredient["category"] }[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<Ingredient["category"] | "all">("all");
@@ -121,7 +123,7 @@ const NewRecipe = () => {
       navigate(`/recipes/${created.id}`);
     } else {
       // Supabase not configured: disable save
-      alert("Supabase n'est pas configuré (VITE_SUPABASE_URL/ANON_KEY). Configurez-le pour enregistrer les recettes.");
+      alert(t('errors.supabaseNotConfigured'));
     }
   };
 
@@ -131,45 +133,45 @@ const NewRecipe = () => {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <h1 className="text-2xl font-bold">Create a New Recipe</h1>
-              <p className="text-sm text-muted-foreground">Fill in the details below.</p>
+              <h1 className="text-2xl font-bold">{t('recipes.createNewRecipe')}</h1>
+              <p className="text-sm text-muted-foreground">{t('recipes.fillDetails')}</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium">Name</label>
-                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Tomato Basil Pasta" />
+                  <label className="text-sm font-medium">{t('recipes.name')}</label>
+                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('recipes.namePlaceholder')} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Difficulty</label>
+                  <label className="text-sm font-medium">{t('recipes.difficulty')}</label>
                   <Select value={difficulty} onValueChange={(v) => setDifficulty(v as Recipe["difficulty"])}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select difficulty" />
+                      <SelectValue placeholder={t('recipes.selectDifficulty')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {difficultyOptions.map(d => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
+                      {difficultyOptions.map(d => (<SelectItem key={d} value={d}>{t(`recipes.${d}`)}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Cook Time (min)</label>
+                  <label className="text-sm font-medium">{t('recipes.cookTimeMinutes')}</label>
                   <Input type="number" min={0} value={cookTime} onChange={(e) => setCookTime(toNumber(e.target.value))} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Servings</label>
+                  <label className="text-sm font-medium">{t('recipes.servingsCount')}</label>
                   <Input type="number" min={1} value={servings} onChange={(e) => setServings(Math.max(1, toNumber(e.target.value)))} />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-medium">Description</label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Short description..." />
+                <label className="text-sm font-medium">{t('recipes.description')}</label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('recipes.descriptionPlaceholder')} />
               </div>
 
               <div>
-                <label className="text-sm font-medium">Image</label>
+                <label className="text-sm font-medium">{t('recipes.image')}</label>
                 <div className="flex items-center gap-3">
-                  <Input type="url" placeholder="Image URL (optional)" value={image.startsWith("data:") ? "" : image} onChange={(e) => setImage(e.target.value)} />
+                  <Input type="url" placeholder={t('recipes.imageUrlPlaceholder')} value={image.startsWith("data:") ? "" : image} onChange={(e) => setImage(e.target.value)} />
                   <Input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleImageFile(file); }} />
                 </div>
                 {image && (
@@ -180,15 +182,15 @@ const NewRecipe = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium">Tags</label>
+                <label className="text-sm font-medium">{t('recipes.tagsLabel')}</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {tags.map(t => (
                     <Badge key={t} variant="outline" onClick={() => setTags(tags.filter(x => x !== t))} className="cursor-pointer">{t}</Badge>
                   ))}
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <Input placeholder="Add tag" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && tagInput.trim()) { setTags(Array.from(new Set([...tags, tagInput.trim()]))); setTagInput(""); } }} />
-                  <Button type="button" variant="outline" onClick={() => { if (tagInput.trim()) { setTags(Array.from(new Set([...tags, tagInput.trim()]))); setTagInput(""); } }}>Add</Button>
+                  <Input placeholder={t('recipes.addTagPlaceholder')} value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && tagInput.trim()) { setTags(Array.from(new Set([...tags, tagInput.trim()]))); setTagInput(""); } }} />
+                  <Button type="button" variant="outline" onClick={() => { if (tagInput.trim()) { setTags(Array.from(new Set([...tags, tagInput.trim()]))); setTagInput(""); } }}>{t('common.add')}</Button>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {tagSuggestions.map(s => (
@@ -198,31 +200,31 @@ const NewRecipe = () => {
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold mb-2">Instructions</h2>
+                <h2 className="text-lg font-semibold mb-2">{t('recipes.instructionsLabel')}</h2>
                 <div className="space-y-3">
                   {instructions.map((step, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <span className="mt-2 text-sm text-muted-foreground w-6">{idx + 1}.</span>
-                      <Textarea value={step} onChange={(e) => setInstructions(prev => prev.map((s, i) => i === idx ? e.target.value : s))} placeholder="Write the step..." />
-                      <Button type="button" variant="outline" onClick={() => handleRemoveInstruction(idx)}>Remove</Button>
+                      <Textarea value={step} onChange={(e) => setInstructions(prev => prev.map((s, i) => i === idx ? e.target.value : s))} placeholder={t('recipes.writeStep')} />
+                      <Button type="button" variant="outline" onClick={() => handleRemoveInstruction(idx)}>{t('common.remove')}</Button>
                     </div>
                   ))}
-                  <Button type="button" variant="secondary" onClick={handleAddInstruction}>Add Step</Button>
+                  <Button type="button" variant="secondary" onClick={handleAddInstruction}>{t('recipes.addStep')}</Button>
                 </div>
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold mb-2">Ingredients</h2>
+                <h2 className="text-lg font-semibold mb-2">{t('recipes.ingredientsLabel')}</h2>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-sm text-muted-foreground">Filter by category</span>
+                  <span className="text-sm text-muted-foreground">{t('recipes.filterByCategory')}</span>
                   <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v as any)}>
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All" />
+                      <SelectValue placeholder={t('recipes.all')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="all">{t('recipes.all')}</SelectItem>
                       {(["protein","vegetable","grain","dairy","spice","other"] as Ingredient["category"][]).map(c => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                        <SelectItem key={c} value={c}>{t(`categories.${c}`)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -234,41 +236,41 @@ const NewRecipe = () => {
                   {ingredients.map((ing) => (
                     <div key={ing.id} className="grid grid-cols-1 md:grid-cols-6 gap-2 items-center">
                       <div className="md:col-span-2">
-                        <Input list={`ingredient-names-${ing.id}`} placeholder="Name" value={ing.name} onChange={(e) => handleIngredientNameChange(ing.id, e.target.value)} />
+                        <Input list={`ingredient-names-${ing.id}`} placeholder={t('recipes.ingredientName')} value={ing.name} onChange={(e) => handleIngredientNameChange(ing.id, e.target.value)} />
                         <datalist id={`ingredient-names-${ing.id}`}>
                           {catalog.filter(c => categoryFilter === "all" || c.category === categoryFilter).map(c => (<option key={c.name} value={c.name} />))}
                         </datalist>
                       </div>
                       <div>
-                        <Input type="number" min={0} placeholder="Amount" value={ing.amount} onChange={(e) => setIngredients(prev => prev.map(i => i.id === ing.id ? { ...i, amount: toNumber(e.target.value) } : i))} />
+                        <Input type="number" min={0} placeholder={t('recipes.amount')} value={ing.amount} onChange={(e) => setIngredients(prev => prev.map(i => i.id === ing.id ? { ...i, amount: toNumber(e.target.value) } : i))} />
                       </div>
                       <div>
-                        <Input placeholder="Unit" value={ing.unit} onChange={(e) => setIngredients(prev => prev.map(i => i.id === ing.id ? { ...i, unit: e.target.value } : i))} />
+                        <Input placeholder={t('recipes.unit')} value={ing.unit} onChange={(e) => setIngredients(prev => prev.map(i => i.id === ing.id ? { ...i, unit: e.target.value } : i))} />
                       </div>
                       <div>
                         <Select value={ing.category} onValueChange={(v) => setIngredients(prev => prev.map(i => i.id === ing.id ? { ...i, category: v as Ingredient["category"] } : i))}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Category" />
+                            <SelectValue placeholder={t('recipes.selectCategory')} />
                           </SelectTrigger>
                           <SelectContent>
                             {(["protein","vegetable","grain","dairy","spice","other"] as Ingredient["category"][ ]).map(c => (
-                              <SelectItem key={c} value={c}>{c}</SelectItem>
+                              <SelectItem key={c} value={c}>{t(`categories.${c}`)}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Button type="button" variant="outline" onClick={() => handleRemoveIngredient(ing.id)}>Remove</Button>
+                        <Button type="button" variant="outline" onClick={() => handleRemoveIngredient(ing.id)}>{t('common.remove')}</Button>
                       </div>
                     </div>
                   ))}
-                  <Button type="button" variant="secondary" onClick={handleAddIngredient}>Add Ingredient</Button>
+                  <Button type="button" variant="secondary" onClick={handleAddIngredient}>{t('recipes.addIngredient')}</Button>
                 </div>
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => navigate(-1)}>Cancel</Button>
-                <Button onClick={onSubmit} disabled={!canSave}>Save Recipe</Button>
+                <Button variant="outline" onClick={() => navigate(-1)}>{t('common.cancel')}</Button>
+                <Button onClick={onSubmit} disabled={!canSave}>{t('recipes.saveRecipe')}</Button>
               </div>
             </CardContent>
           </Card>
@@ -276,11 +278,11 @@ const NewRecipe = () => {
         <div>
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold">Tips</h2>
-              <p className="text-sm text-muted-foreground">Select existing ingredients or create new ones; they’ll be added to your catalog.</p>
+              <h2 className="text-lg font-semibold">{t('recipes.tips')}</h2>
+              <p className="text-sm text-muted-foreground">{t('recipes.tipsDescription')}</p>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">You can paste an image URL or upload a photo; it’ll be stored locally in your browser.</p>
+              <p className="text-sm text-muted-foreground">{t('recipes.imageTip')}</p>
             </CardContent>
           </Card>
         </div>
@@ -293,6 +295,7 @@ export default NewRecipe;
 
 // Modal to create a new ingredient with packaging options
 function NewIngredientModal({ onCreated }: { onCreated: () => Promise<void> | void }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [category, setCategory] = useState<Ingredient["category"]>("other");
@@ -315,27 +318,27 @@ function NewIngredientModal({ onCreated }: { onCreated: () => Promise<void> | vo
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">New Ingredient</Button>
+        <Button variant="outline" size="sm">{t('recipes.newIngredient')}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Ingredient</DialogTitle>
+          <DialogTitle>{t('recipes.createIngredient')}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="text-sm font-medium">Name</label>
+              <label className="text-sm font-medium">{t('recipes.name')}</label>
               <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Pasta" />
             </div>
             <div>
-              <label className="text-sm font-medium">Category</label>
+              <label className="text-sm font-medium">{t('recipes.category')}</label>
               <Select value={category} onValueChange={(v) => setCategory(v as Ingredient["category"]) }>
                 <SelectTrigger>
-                  <SelectValue placeholder="Category" />
+                  <SelectValue placeholder={t('recipes.selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
                   {(["protein","vegetable","grain","dairy","spice","other"] as Ingredient["category"][]).map(c => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                    <SelectItem key={c} value={c}>{t(`categories.${c}`)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -343,31 +346,31 @@ function NewIngredientModal({ onCreated }: { onCreated: () => Promise<void> | vo
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="text-sm font-medium">Default Unit</label>
-              <Input value={defaultUnit} onChange={(e) => setDefaultUnit(e.target.value)} placeholder="g / ml / piece" />
+              <label className="text-sm font-medium">{t('recipes.defaultUnit')}</label>
+              <Input value={defaultUnit} onChange={(e) => setDefaultUnit(e.target.value)} placeholder={t('recipes.unitPlaceholder')} />
             </div>
             <div>
-              <label className="text-sm font-medium">Packaging Unit</label>
-              <Input value={packUnit} onChange={(e) => setPackUnit(e.target.value)} placeholder="g / ml / piece" />
+              <label className="text-sm font-medium">{t('recipes.packagingUnit')}</label>
+              <Input value={packUnit} onChange={(e) => setPackUnit(e.target.value)} placeholder={t('recipes.unitPlaceholder')} />
             </div>
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium">Packaging amounts</label>
-              <Button variant="secondary" size="sm" onClick={addPack}>Add</Button>
+              <label className="text-sm font-medium">{t('recipes.packagingAmounts')}</label>
+              <Button variant="secondary" size="sm" onClick={addPack}>{t('common.add')}</Button>
             </div>
             <div className="space-y-2">
               {packs.map((v, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <Input type="number" min={0} value={v} onChange={(e) => setPacks(prev => prev.map((x,i) => i===idx ? Number(e.target.value) : x))} />
-                  <Button variant="outline" size="sm" onClick={() => removePack(idx)}>Remove</Button>
+                  <Button variant="outline" size="sm" onClick={() => removePack(idx)}>{t('common.remove')}</Button>
                 </div>
               ))}
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={save} disabled={!name.trim()}>Save</Button>
+            <Button variant="outline" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>
+            <Button onClick={save} disabled={!name.trim()}>{t('common.save')}</Button>
           </div>
         </div>
       </DialogContent>

@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { isSupabaseEnabled, supabase } from "@/lib/supabaseClient";
 import { deleteMealPlanRow, fetchMealPlansForUser, upsertMealPlanRow } from "@/lib/supabaseApi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 interface MealSlot {
   date: string;
@@ -17,6 +18,7 @@ interface MealSlot {
 }
 
 const MealPlanner = () => {
+  const { t } = useTranslation();
   const [plannedMeals, setPlannedMeals] = useState<MealSlot[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -60,8 +62,12 @@ const MealPlanner = () => {
     }
 
     toast({
-      title: "Meal Added!",
-      description: `${randomRecipe.name} added to ${meal} on ${new Date(date).toLocaleDateString()}`,
+      title: t('mealPlanner.mealAdded'),
+      description: t('mealPlanner.mealAddedDescription', { 
+        recipeName: randomRecipe.name, 
+        meal: meal, 
+        date: new Date(date).toLocaleDateString() 
+      }),
     });
   };
 
@@ -71,8 +77,8 @@ const MealPlanner = () => {
       await deleteMealPlanRow(userId, date, meal);
     }
     toast({
-      title: "Meal Removed",
-      description: `Meal removed from ${meal}`,
+      title: t('mealPlanner.mealRemoved'),
+      description: t('mealPlanner.mealRemovedDescription', { meal }),
     });
   };
   // Auth + initial load
@@ -124,19 +130,22 @@ const MealPlanner = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
             <Calendar className="h-8 w-8 text-primary" />
-            Weekly Meal Planner
+            {t('mealPlanner.title')}
           </h1>
           <p className="text-muted-foreground">
-            Plan your meals for the week and generate your grocery list automatically
+            {t('mealPlanner.subtitle')}
           </p>
         </div>
 
         {/* Meal Planning Horizontal Scroll */}
         <div className="mb-8">
           <div className="text-center mb-4">
-            <h2 className="text-lg font-semibold">Next 7 Days</h2>
+            <h2 className="text-lg font-semibold">{t('mealPlanner.next7Days')}</h2>
             <p className="text-sm text-muted-foreground">
-              {days[0]?.date} - {days[6]?.date}
+              {t('mealPlanner.dateRange', { 
+                startDate: days[0]?.date, 
+                endDate: days[6]?.date 
+              })}
             </p>
           </div>
           
@@ -152,7 +161,7 @@ const MealPlanner = () => {
                   <div className="text-sm text-muted-foreground">{day.dayNum}</div>
                   {day.isToday && (
                     <Badge variant="default" className="mt-1 text-xs">
-                      Today
+                      {t('common.today')}
                     </Badge>
                   )}
                 </CardTitle>
@@ -165,7 +174,7 @@ const MealPlanner = () => {
                     <div key={mealType} className="border border-border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium capitalize text-foreground">
-                          {mealType}
+                          {t(`mealPlanner.${mealType}`)}
                         </span>
                         {meal && (
                           <Button
@@ -206,15 +215,15 @@ const MealPlanner = () => {
                           </div>
                         </div>
                       ) : (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full h-12"
-                          onClick={() => addRandomMeal(day.date, mealType)}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Meal
-                        </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full h-12"
+                            onClick={() => addRandomMeal(day.date, mealType)}
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            {t('mealPlanner.addMeal')}
+                          </Button>
                       )}
                     </div>
                   );
@@ -230,22 +239,22 @@ const MealPlanner = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="shadow-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg">Week Summary</CardTitle>
+              <CardTitle className="text-lg">{t('mealPlanner.weekSummary')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Planned Meals:</span>
+                  <span className="text-muted-foreground">{t('mealPlanner.plannedMeals')}:</span>
                   <span className="font-medium">{plannedMeals.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Cook Time:</span>
+                  <span className="text-muted-foreground">{t('mealPlanner.totalCookTime')}:</span>
                   <span className="font-medium">
                     {plannedMeals.reduce((acc, meal) => acc + (meal.recipe?.cookTime || 0), 0)}m
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Unique Ingredients:</span>
+                  <span className="text-muted-foreground">{t('mealPlanner.uniqueIngredients')}:</span>
                   <span className="font-medium">{getTotalIngredients().length}</span>
                 </div>
               </div>
@@ -254,30 +263,30 @@ const MealPlanner = () => {
 
           <Card className="shadow-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
+              <CardTitle className="text-lg">{t('mealPlanner.quickActions')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/recipes/new")}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Custom Recipe
+                {t('mealPlanner.addCustomRecipe')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <Calendar className="h-4 w-4 mr-2" />
-                Auto-Fill Week
+                {t('mealPlanner.autoFillWeek')}
               </Button>
             </CardContent>
           </Card>
 
           <Card className="shadow-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg">Grocery List Preview</CardTitle>
+              <CardTitle className="text-lg">{t('mealPlanner.groceryListPreview')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-3">
-                {getTotalIngredients().length} ingredients needed
+                {t('mealPlanner.ingredientsNeeded', { count: getTotalIngredients().length })}
               </p>
               <Button variant="success" className="w-full" onClick={() => navigate("/groceries")}>
-                Generate Full List
+                {t('mealPlanner.generateFullList')}
               </Button>
             </CardContent>
           </Card>

@@ -6,12 +6,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { isSupabaseEnabled, supabase } from "@/lib/supabaseClient";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {
+  const { t } = useTranslation();
+  
   const navItems = [
-    { to: "/", label: "Recipes", icon: BookOpen },
-    { to: "/planner", label: "Meal Planner", icon: Calendar },
-    { to: "/groceries", label: "Grocery List", icon: ShoppingCart },
+    { to: "/", label: t('navigation.recipes'), icon: BookOpen },
+    { to: "/planner", label: t('navigation.mealPlanner'), icon: Calendar },
+    { to: "/groceries", label: t('navigation.groceryList'), icon: ShoppingCart },
   ];
 
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -52,7 +56,7 @@ const Navbar = () => {
         <a href="/">
           <div className="flex items-center gap-2">
             <ChefHat className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">FreshPlanner</span>
+            <span className="text-xl font-bold text-foreground">{t('app.title')}</span>
           </div>
         </a>
         
@@ -81,40 +85,42 @@ const Navbar = () => {
               </Button>
             );
           })}
-          {isSupabaseEnabled && (
-            userEmail ? (
-              <div className="flex items-center gap-2 ml-2">
-                <span className="text-sm text-muted-foreground hidden lg:block">{userEmail}</span>
-                <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
-                  <LogOut className="h-4 w-4" />
-                  <span className="hidden sm:inline">Logout</span>
-                </Button>
-              </div>
-            ) : (
+          <div className="flex items-center gap-2 ml-2">
+            <LanguageSwitcher />
+            {isSupabaseEnabled && (
+              userEmail ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground hidden lg:block">{userEmail}</span>
+                  <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
+                    <LogOut className="h-4 w-4" />
+                    <span className="hidden sm:inline">{t('navigation.logout')}</span>
+                  </Button>
+                </div>
+              ) : (
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button variant="default" size="sm" className="ml-2">
-                    <span className="hidden sm:inline">Login</span>
-                    <span className="sm:hidden">Login</span>
+                    <span className="hidden sm:inline">{t('navigation.login')}</span>
+                    <span className="sm:hidden">{t('navigation.login')}</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Sign in</DialogTitle>
+                    <DialogTitle>{t('auth.signIn')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3">
                     <div className="flex gap-2">
-                      <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Input type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} />
                       <Button onClick={sendMagicLink} className="gap-2">
-                        <Mail className="h-4 w-4" /> Magic Link
+                        <Mail className="h-4 w-4" /> {t('auth.magicLink')}
                       </Button>
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" className="gap-2 flex-1" onClick={() => oauth('google')}>
-                        <Chrome className="h-4 w-4" /> Google
+                        <Chrome className="h-4 w-4" /> {t('auth.google')}
                       </Button>
                       <Button variant="outline" className="gap-2 flex-1" onClick={() => oauth('github')}>
-                        <Github className="h-4 w-4" /> GitHub
+                        <Github className="h-4 w-4" /> {t('auth.github')}
                       </Button>
                     </div>
                   </div>
@@ -122,10 +128,12 @@ const Navbar = () => {
               </Dialog>
             )
           )}
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center gap-2">
+          <LanguageSwitcher />
           {isSupabaseEnabled && userEmail && (
             <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
               <LogOut className="h-4 w-4" />
@@ -134,25 +142,25 @@ const Navbar = () => {
           {isSupabaseEnabled && !userEmail && (
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button variant="default" size="sm">Login</Button>
+                <Button variant="default" size="sm">{t('navigation.login')}</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Sign in</DialogTitle>
+                  <DialogTitle>{t('auth.signIn')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-3">
                   <div className="flex gap-2">
-                    <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <Input type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} />
                     <Button onClick={sendMagicLink} className="gap-2">
-                      <Mail className="h-4 w-4" /> Magic Link
+                      <Mail className="h-4 w-4" /> {t('auth.magicLink')}
                     </Button>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" className="gap-2 flex-1" onClick={() => oauth('google')}>
-                      <Chrome className="h-4 w-4" /> Google
+                      <Chrome className="h-4 w-4" /> {t('auth.google')}
                     </Button>
                     <Button variant="outline" className="gap-2 flex-1" onClick={() => oauth('github')}>
-                      <Github className="h-4 w-4" /> GitHub
+                      <Github className="h-4 w-4" /> {t('auth.github')}
                     </Button>
                   </div>
                 </div>
